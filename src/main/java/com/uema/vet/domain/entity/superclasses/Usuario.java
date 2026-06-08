@@ -21,5 +21,6 @@ public class Usuario {
     @ManyToOne
     @JoinColumn(name = "id_endereco")
     private Endereco endereco;
+    private String senha;
 
 }

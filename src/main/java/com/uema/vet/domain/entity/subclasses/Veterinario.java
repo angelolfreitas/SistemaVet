@@ -13,7 +13,6 @@ import lombok.EqualsAndHashCode;
 @PrimaryKeyJoinColumn(name = "id_veterinario")
 @Data
 public class Veterinario extends Usuario {
-    private String senha;
     private String crmv;
     private String especialidade;
 }

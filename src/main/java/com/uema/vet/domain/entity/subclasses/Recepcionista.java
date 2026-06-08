@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @PrimaryKeyJoinColumn(name = "id_recepcionista")
 @Data
 public class Recepcionista extends Usuario {
-    private String senha;
     @Column(name = "data_admissao")
     private LocalDate dataAdmissao;
     private String turno;
