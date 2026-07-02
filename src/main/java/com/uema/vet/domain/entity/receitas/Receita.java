@@ -3,6 +3,8 @@ package com.uema.vet.domain.entity.receitas;
 import com.uema.vet.domain.entity.Atendimento;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,6 +28,8 @@ public class Receita {
     @JoinColumn(name = "id_atendimento")
     private Atendimento atendimento;
 
-    @OneToMany(mappedBy = "receita")
+    @OneToMany(mappedBy = "receita", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<ItemReceita> itens;
 }

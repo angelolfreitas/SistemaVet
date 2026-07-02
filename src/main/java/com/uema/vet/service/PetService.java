@@ -4,8 +4,11 @@ import com.uema.vet.domain.dto.pet.PetRequest;
 import com.uema.vet.domain.dto.pet.PetResponse;
 import com.uema.vet.domain.entity.Pet;
 import com.uema.vet.domain.entity.subclasses.Tutor;
+import com.uema.vet.repository.AtendimentoRepository;
 import com.uema.vet.repository.PetRepository;
 import com.uema.vet.repository.TutorRepository;
+import com.uema.vet.repository.projection.EvolucaoPesoResponse;
+import com.uema.vet.repository.projection.PetSemAtendimentoProjection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +25,9 @@ public class PetService {
 
     @Autowired
     private TutorRepository tutorRepository;
+
+    @Autowired
+    private AtendimentoRepository atendimentoRepository;
 
     public List<PetResponse> listarTodos() {
         return petRepository.findAll()
@@ -85,7 +91,24 @@ public class PetService {
 
     @Transactional
     public void deletar(Long id) {
-        Pet pet = buscarPorId(id);
+        Pet pet = petRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pet não encontrado"));
+
+        if (pet.getTutores() != null) {
+            for (Tutor tutor : pet.getTutores()) {
+                tutor.getPets().remove(pet);
+            }
+        }
+
+        atendimentoRepository.deleteByPet(pet);
         petRepository.delete(pet);
+    }
+
+    public List<PetSemAtendimentoProjection> buscarPetsSemAtendimento() {
+        return petRepository.buscarPetsSemAtendimento();
+    }
+
+    public List<EvolucaoPesoResponse> buscarEvolucaoPesoNative(Long idPet) {
+        return petRepository.buscarEvolucaoPesoNative(idPet);
     }
 }

@@ -4,7 +4,11 @@ import com.uema.vet.domain.dto.veterinario.VeterinarioRequest;
 import com.uema.vet.domain.dto.veterinario.Veterinarioresponse;
 import com.uema.vet.domain.entity.subclasses.Tutor;
 import com.uema.vet.domain.entity.subclasses.Veterinario;
+import com.uema.vet.infra.security.TokenService;
+import com.uema.vet.repository.AtendimentoRepository;
 import com.uema.vet.repository.VeterinarioRepository;
+import com.uema.vet.repository.projection.TopMedicamentosProjection;
+import com.uema.vet.repository.projection.TotalAtendimentosProjection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,13 @@ public class VeterinarioService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private AtendimentoRepository atendimentoRepository;
 
     public List<Veterinarioresponse> listarTodos() {
         return veterinarioRepository.findAll()
@@ -52,7 +63,8 @@ public class VeterinarioService {
             veterinario.setEndereco(request.endereco());
 
             veterinarioRepository.save(veterinario);
-            return Optional.of(Veterinarioresponse.create(veterinario));
+            String token = this.tokenService.generateToken(veterinario);
+            return Optional.of(Veterinarioresponse.create(veterinario, token));
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -91,7 +103,21 @@ public class VeterinarioService {
     }
     @Transactional
     public void deletar(Long id) {
-        Veterinario veterinario = buscarPorId(id);
-        veterinarioRepository.delete(veterinario);
+        Veterinario vet = veterinarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Veterinário não encontrado"));
+
+        // 1. Deleta todos os atendimentos vinculados a este veterinário
+        atendimentoRepository.deleteByVeterinario(vet);
+
+        // 2. Deleta o Veterinário
+        veterinarioRepository.delete(vet);
+    }
+
+    public List<TotalAtendimentosProjection> buscarTotalAtendimentos() {
+        return veterinarioRepository.buscarTotalAtendimentos();
+    }
+
+    public List<TopMedicamentosProjection> buscarTopMedicamentosPorVeterinario() {
+        return veterinarioRepository.buscarTopMedicamentosPorVeterinario();
     }
 }

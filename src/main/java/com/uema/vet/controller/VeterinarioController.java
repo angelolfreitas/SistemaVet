@@ -8,6 +8,8 @@ import com.uema.vet.domain.entity.Atendimento;
 import com.uema.vet.domain.entity.subclasses.Tutor;
 import com.uema.vet.domain.entity.subclasses.Veterinario;
 import com.uema.vet.domain.entity.superclasses.Usuario;
+import com.uema.vet.repository.projection.TopMedicamentosProjection;
+import com.uema.vet.repository.projection.TotalAtendimentosProjection;
 import com.uema.vet.service.VeterinarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -77,5 +79,17 @@ public class VeterinarioController {
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         veterinarioService.deletar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/relatorio/total-atendimentos")
+    @PreAuthorize("hasAuthority('user::read')")
+    public ResponseEntity<List<TotalAtendimentosProjection>> obterTotalAtendimentos() {
+        return ResponseEntity.ok(veterinarioService.buscarTotalAtendimentos());
+    }
+
+    @GetMapping("/relatorio/top-medicamentos")
+    @PreAuthorize("hasAuthority('user::read')")
+    public ResponseEntity<List<TopMedicamentosProjection>> obterTopMedicamentos() {
+        return ResponseEntity.ok(veterinarioService.buscarTopMedicamentosPorVeterinario());
     }
 }

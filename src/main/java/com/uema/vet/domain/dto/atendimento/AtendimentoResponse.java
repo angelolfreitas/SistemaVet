@@ -16,7 +16,8 @@ public record AtendimentoResponse(LocalDate data,
                                   String anamnese,
                                   String petName,
                                   String tutorName,
-                                  String veterinarioName) {
+                                  String veterinarioName,
+                                  Long id) {
     public static AtendimentoResponse create(Atendimento atendimento) {
         return AtendimentoResponse.builder()
                 .data(atendimento.getData())
@@ -28,6 +29,7 @@ public record AtendimentoResponse(LocalDate data,
                 .petName(atendimento.getPet().getNome())
                 .tutorName(atendimento.getTutor().getUsername())
                 .veterinarioName(atendimento.getVeterinario().getUsername())
+                .id(atendimento.getIdAtendimento())
                 .build();
     }
 }

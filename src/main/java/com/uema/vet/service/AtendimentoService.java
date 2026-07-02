@@ -10,6 +10,8 @@ import com.uema.vet.repository.AtendimentoRepository;
 import com.uema.vet.repository.PetRepository;
 import com.uema.vet.repository.TutorRepository;
 import com.uema.vet.repository.VeterinarioRepository;
+import com.uema.vet.repository.projection.HistoricoClinicoProjection;
+import com.uema.vet.repository.projection.MultiplosMedicamentosProjection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +51,6 @@ public class AtendimentoService {
 
     @Transactional
     public Optional<AtendimentoResponse> criar(AtendimentoRequest atendimento) {
-        try{
             // Valida se o Pet existe
             Pet pet = petRepository.findById(atendimento.petid())
                     .orElseThrow(() -> new RuntimeException("Pet não encontrado"));
@@ -74,16 +75,12 @@ public class AtendimentoService {
                     .build();
             atendimentoRepository.save(atendimentoValue);
             return Optional.of(AtendimentoResponse.create(atendimentoValue));
-        }catch (Exception e){
-            return Optional.empty();
-        }
 
     }
 
 
     @Transactional
     public Optional<AtendimentoResponse> updateAtendimento(Long id, AtendimentoRequest request) {
-        try {
             Atendimento atendimento = buscarPorId(id);
 
             Pet pet = petRepository.findById(request.petid()).orElseThrow();
@@ -102,9 +99,6 @@ public class AtendimentoService {
 
             atendimentoRepository.save(atendimento);
             return Optional.of(AtendimentoResponse.create(atendimento));
-        } catch (Exception e) {
-            return Optional.empty();
-        }
     }
 
     @Transactional
@@ -114,7 +108,13 @@ public class AtendimentoService {
             Field field = ReflectionUtils.findField(Atendimento.class, key);
             if (field != null) {
                 ReflectionUtils.makeAccessible(field);
-                ReflectionUtils.setField(field, atendimento, value);
+
+                if (field.getType().isEnum()) {
+                    Object enumValue = Enum.valueOf((Class<Enum>) field.getType(), value.toString());
+                    ReflectionUtils.setField(field, atendimento, enumValue);
+                } else {
+                    ReflectionUtils.setField(field, atendimento, value);
+                }
             }
         });
         atendimentoRepository.save(atendimento);
@@ -124,5 +124,13 @@ public class AtendimentoService {
     public void deletar(Long id) {
         Atendimento atendimento = buscarPorId(id);
         atendimentoRepository.delete(atendimento);
+    }
+
+    public List<HistoricoClinicoProjection> buscarHistoricoClinico(Long idPet) {
+        return atendimentoRepository.buscarHistoricoClinico(idPet);
+    }
+
+    public List<MultiplosMedicamentosProjection> buscarAtendimentosComMultiplosMedicamentos() {
+        return atendimentoRepository.buscarAtendimentosComMultiplosMedicamentos();
     }
 }

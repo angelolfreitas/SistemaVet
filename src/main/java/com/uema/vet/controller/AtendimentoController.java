@@ -6,6 +6,7 @@ import com.uema.vet.domain.dto.auth.LoginResponseDTO;
 import com.uema.vet.domain.dto.auth.RegisterRequestDTO;
 import com.uema.vet.domain.entity.Atendimento;
 import com.uema.vet.domain.entity.superclasses.Usuario;
+import com.uema.vet.repository.projection.MultiplosMedicamentosProjection;
 import com.uema.vet.service.AtendimentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -70,5 +71,11 @@ public class AtendimentoController {
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         atendimentoService.deletar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/relatorio/multiplos-medicamentos")
+    @PreAuthorize("hasAuthority('user::read')")
+    public ResponseEntity<List<MultiplosMedicamentosProjection>> obterMultiplosMedicamentos() {
+        return ResponseEntity.ok(atendimentoService.buscarAtendimentosComMultiplosMedicamentos());
     }
 }

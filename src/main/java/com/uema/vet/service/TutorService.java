@@ -4,6 +4,8 @@ import com.uema.vet.domain.dto.tutor.TutorRequest;
 import com.uema.vet.domain.dto.tutor.TutorResponse;
 import com.uema.vet.domain.entity.Pet;
 import com.uema.vet.domain.entity.subclasses.Tutor;
+import com.uema.vet.infra.security.TokenService;
+import com.uema.vet.repository.AtendimentoRepository;
 import com.uema.vet.repository.TutorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +27,13 @@ public class TutorService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AtendimentoRepository atendimentoRepository;
+
+
+    @Autowired
+    private TokenService tokenService;
 
     public List<TutorResponse> listarTodos() {
         return tutorRepository.findAll()
@@ -53,7 +62,8 @@ public class TutorService {
             tutor.setEndereco(request.endereco());
 
             tutorRepository.save(tutor);
-            return Optional.of(TutorResponse.create(tutor));
+            String token = this.tokenService.generateToken(tutor);
+            return Optional.of(TutorResponse.create(tutor, token));
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -89,9 +99,13 @@ public class TutorService {
         tutorRepository.save(tutor);
     }
 
-    @Transactional
     public void deletar(Long id) {
-        Tutor tutor = buscarPorId(id);
+        Tutor tutor = tutorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tutor não encontrado"));
+
+        tutor.getPets().clear();
+
+        atendimentoRepository.deleteByTutor(tutor);
         tutorRepository.delete(tutor);
     }
 }

@@ -4,6 +4,7 @@ import com.uema.vet.domain.dto.auth.LoginRequestDTO;
 import com.uema.vet.domain.dto.auth.LoginResponseDTO;
 import com.uema.vet.domain.dto.auth.RegisterRequestDTO;
 import com.uema.vet.domain.entity.superclasses.Usuario;
+import com.uema.vet.domain.entity.superclasses.role.Role;
 import com.uema.vet.infra.security.TokenService;
 import com.uema.vet.repository.UsuarioRepository;
 import org.apache.catalina.User;
@@ -43,7 +44,7 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public LoginResponseDTO register(RegisterRequestDTO data) {
+    public LoginResponseDTO register(RegisterRequestDTO data, Role role) {
         Optional<Usuario> user = this.repository.findByEmail(data.email());
 
         if (user.isPresent()) {
@@ -55,7 +56,7 @@ public class AuthenticationService {
         newUser.setEmail(data.email());
         newUser.setPassword(passwordEncoder.encode(data.password())); // Criptografa a senha
         newUser.setCpf(data.cpf());
-        newUser.setRole(data.role());
+        newUser.setRole(role);
 
         this.repository.save(newUser);
 

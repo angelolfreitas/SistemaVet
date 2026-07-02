@@ -1,5 +1,6 @@
 package com.uema.vet.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.uema.vet.domain.entity.subclasses.Tutor;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -33,5 +34,9 @@ public class Pet {
     private BigDecimal pesoAtual;
 
     @ManyToMany(mappedBy = "pets")
+    @JsonIgnore
     private List<Tutor> tutores;
+
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Atendimento> atendimentos;
 }

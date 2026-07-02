@@ -5,6 +5,7 @@ import com.uema.vet.domain.entity.superclasses.Endereco;
 import com.uema.vet.domain.entity.superclasses.role.Role;
 
 import java.util.List;
+import java.util.Set;
 
 public record TutorRequest(String username,
                            String cpf,
@@ -13,5 +14,5 @@ public record TutorRequest(String username,
                            Endereco endereco,
                            String password,
                            Role role,
-                           List<Pet> pets) {
+                           Set<Pet> pets) {
 }

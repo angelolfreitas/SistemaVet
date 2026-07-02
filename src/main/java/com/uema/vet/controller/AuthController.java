@@ -4,9 +4,11 @@ import com.uema.vet.domain.dto.auth.LoginRequestDTO;
 import com.uema.vet.domain.dto.auth.LoginResponseDTO;
 import com.uema.vet.domain.dto.auth.RegisterRequestDTO;
 import com.uema.vet.domain.entity.superclasses.Usuario;
+import com.uema.vet.domain.entity.superclasses.role.Role;
 import com.uema.vet.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +34,17 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequestDTO body) {
         try {
-            LoginResponseDTO response = this.authService.register(body);
+            LoginResponseDTO response = this.authService.register(body, Role.USER);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @PostMapping("/usuarios")
+    @PreAuthorize("hasAuthority('admin::write')")
+    public ResponseEntity<?> adminRegister(@RequestBody RegisterRequestDTO body) {
+        try {
+            LoginResponseDTO response = this.authService.register(body, body.role());
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

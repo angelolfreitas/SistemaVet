@@ -4,7 +4,7 @@ import lombok.Getter;
 
 public enum StatusAtendimento {
     RUNNING("em andamento"),
-    FINISHED("terminou"),
+    FINISHED("CONCLUIDO"),
     RETURN_REQUIRED("precisa de retorno");
     @Getter
     private final String name;

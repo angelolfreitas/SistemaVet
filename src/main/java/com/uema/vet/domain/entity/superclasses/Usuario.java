@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -16,7 +17,7 @@ import java.util.Collection;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Data
 
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Usuario  implements UserDetails {
@@ -30,7 +31,7 @@ public class Usuario  implements UserDetails {
     private String email;
     private String telefone;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "id_endereco")
     private Endereco endereco;
     @Column(name = "senha")
