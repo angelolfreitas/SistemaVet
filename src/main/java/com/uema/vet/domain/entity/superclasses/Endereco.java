@@ -1,11 +1,18 @@
 package com.uema.vet.domain.entity.superclasses;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "endereco")
 @Data
+
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Endereco {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -5,8 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -15,6 +14,10 @@ import java.time.LocalDate;
 @Table(name = "recepcionista")
 @PrimaryKeyJoinColumn(name = "id_recepcionista")
 @Data
+
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Recepcionista extends Usuario {
     @Column(name = "data_admissao")
     private LocalDate dataAdmissao;

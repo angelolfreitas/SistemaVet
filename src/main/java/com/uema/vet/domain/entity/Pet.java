@@ -2,7 +2,10 @@ package com.uema.vet.domain.entity;
 
 import com.uema.vet.domain.entity.subclasses.Tutor;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,6 +14,9 @@ import java.util.List;
 @Entity
 @Table(name = "pets")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Pet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,7 @@
 package com.uema.vet.service;
 
+import com.uema.vet.domain.dto.atendimento.AtendimentoRequest;
+import com.uema.vet.domain.dto.atendimento.AtendimentoResponse;
 import com.uema.vet.domain.entity.Atendimento;
 import com.uema.vet.domain.entity.Pet;
 import com.uema.vet.domain.entity.subclasses.Tutor;
@@ -11,8 +13,12 @@ import com.uema.vet.repository.VeterinarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class AtendimentoService {
@@ -29,8 +35,11 @@ public class AtendimentoService {
     @Autowired
     private VeterinarioRepository veterinarioRepository;
 
-    public List<Atendimento> listarTodos() {
-        return atendimentoRepository.findAll();
+    public List<AtendimentoResponse> listarTodos() {
+        return atendimentoRepository.findAll()
+                .stream()
+                .map(AtendimentoResponse::create)
+                .toList();
     }
 
     public Atendimento buscarPorId(Long id) {
@@ -39,24 +48,76 @@ public class AtendimentoService {
     }
 
     @Transactional
-    public Atendimento criar(Atendimento atendimento) {
-        // Valida se o Pet existe
-        Pet pet = petRepository.findById(atendimento.getPet().getIdPet())
-                .orElseThrow(() -> new RuntimeException("Pet não encontrado"));
+    public Optional<AtendimentoResponse> criar(AtendimentoRequest atendimento) {
+        try{
+            // Valida se o Pet existe
+            Pet pet = petRepository.findById(atendimento.petid())
+                    .orElseThrow(() -> new RuntimeException("Pet não encontrado"));
 
-        // Valida se o Tutor existe
-        Tutor tutor = tutorRepository.findById(atendimento.getTutor().getIdUsuario())
-                .orElseThrow(() -> new RuntimeException("Tutor não encontrado"));
+            // Valida se o Tutor existe
+            Tutor tutor = tutorRepository.findById(atendimento.tutorId())
+                    .orElseThrow(() -> new RuntimeException("Tutor não encontrado"));
 
-        // Valida se o Veterinário existe
-        Veterinario vet = veterinarioRepository.findById(atendimento.getVeterinario().getIdUsuario())
-                .orElseThrow(() -> new RuntimeException("Veterinário não encontrado"));
+            // Valida se o Veterinário existe
+            Veterinario vet = veterinarioRepository.findById(atendimento.veterinarioId())
+                    .orElseThrow(() -> new RuntimeException("Veterinário não encontrado"));
+            Atendimento atendimentoValue = Atendimento.builder()
+                    .data(atendimento.data())
+                    .pet(pet)
+                    .pesoAtendimento(atendimento.pesoAtendimento())
+                    .hora(atendimento.hora())
+                    .anamnese(atendimento.anamnese())
+                    .tutor(tutor)
+                    .status(atendimento.status())
+                    .motivoConsulta(atendimento.motivoConsulta())
+                    .veterinario(vet)
+                    .build();
+            atendimentoRepository.save(atendimentoValue);
+            return Optional.of(AtendimentoResponse.create(atendimentoValue));
+        }catch (Exception e){
+            return Optional.empty();
+        }
 
-        atendimento.setPet(pet);
-        atendimento.setTutor(tutor);
-        atendimento.setVeterinario(vet);
+    }
 
-        return atendimentoRepository.save(atendimento);
+
+    @Transactional
+    public Optional<AtendimentoResponse> updateAtendimento(Long id, AtendimentoRequest request) {
+        try {
+            Atendimento atendimento = buscarPorId(id);
+
+            Pet pet = petRepository.findById(request.petid()).orElseThrow();
+            Tutor tutor = tutorRepository.findById(request.tutorId()).orElseThrow();
+            Veterinario vet = veterinarioRepository.findById(request.veterinarioId()).orElseThrow();
+
+            atendimento.setData(request.data());
+            atendimento.setHora(request.hora());
+            atendimento.setStatus(request.status());
+            atendimento.setMotivoConsulta(request.motivoConsulta());
+            atendimento.setPesoAtendimento(request.pesoAtendimento());
+            atendimento.setAnamnese(request.anamnese());
+            atendimento.setPet(pet);
+            atendimento.setTutor(tutor);
+            atendimento.setVeterinario(vet);
+
+            atendimentoRepository.save(atendimento);
+            return Optional.of(AtendimentoResponse.create(atendimento));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    @Transactional
+    public void patchAtendimento(Long id, Map<String, Object> updates) {
+        Atendimento atendimento = buscarPorId(id);
+        updates.forEach((key, value) -> {
+            Field field = ReflectionUtils.findField(Atendimento.class, key);
+            if (field != null) {
+                ReflectionUtils.makeAccessible(field);
+                ReflectionUtils.setField(field, atendimento, value);
+            }
+        });
+        atendimentoRepository.save(atendimento);
     }
 
     @Transactional

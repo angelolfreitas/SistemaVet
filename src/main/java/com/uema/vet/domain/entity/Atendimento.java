@@ -4,7 +4,10 @@ import com.uema.vet.domain.entity.subclasses.Tutor;
 import com.uema.vet.domain.entity.subclasses.Veterinario;
 import com.uema.vet.domain.enums.StatusAtendimento;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,6 +16,9 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "atendimento")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Atendimento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
