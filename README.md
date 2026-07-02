@@ -16,7 +16,7 @@ O sistema gerencia os fluxos operacionais e clínicos de uma clínica veterinár
 
 ## Tecnologias 🔧
 
-- Java 17+
+- Java 21
 - Spring Boot 3.x
 - Spring Data JPA / Hibernate
 - MySQL 8+
