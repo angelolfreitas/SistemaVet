@@ -94,6 +94,16 @@ A API sobe em `http://localhost:8080` por padrão.
 
 Detalhes das consultas SQL em [`docs/consultas-sql-relatorios.md`](docs/consultas-sql-relatorios.md).
 
+## Diferenciais Técnicos
+
+1. **Arquitetura Cloud-Ready:** Aplicação conteinerizada via Docker, facilitando a portabilidade e permitindo deploy em qualquer ambiente com suporte a containers.
+2. **Infraestrutura de Banco em Nuvem:** Integração com Aiven (Database-as-a-Service), garantindo alta disponibilidade e separação entre ambiente de desenvolvimento e produção.
+3. **Segurança em Camadas:** Implementação de Autenticação Stateless via JWT (JSON Web Tokens), garantindo a integridade e segurança das comunicações sem dependência de estado no servidor.
+4. **Hierarquia de Acesso Baseada em Authorities:** Controle de acesso refinado via Spring Security, permitindo a gestão de permissões granulares por papéis (Roles) e autoridades, garantindo o princípio do privilégio mínimo.
+5. **Persistência e Performance (Foco em Banco de Dados):** Utilização de *Custom Queries* e *Projections* com JPQL/SQL Nativo para otimizar a extração de relatórios complexos, demonstrando domínio sobre a manipulação de dados em larga escala.
+6. **Integridade Transacional:** Uso rigoroso de `@Transactional` em toda a camada de serviço, assegurando as propriedades ACID (Atomicidade, Consistência, Isolamento, Durabilidade) em todas as operações de escrita no banco.
+7. **Documentação Automatizada:** API documentada com Swagger (OpenAPI 3), permitindo a exploração interativa dos endpoints e facilitando a integração para possíveis front-ends.
+
 ## Licença
 
 Trabalho acadêmico — Disciplina de Banco de Dados, UEMA, 2026.
