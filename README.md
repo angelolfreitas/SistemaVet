@@ -21,6 +21,23 @@ O sistema gerencia os fluxos operacionais e clínicos de uma clínica veterinár
 - Spring Data JPA / Hibernate
 - MySQL 8+
 - Maven
+## Como Rodar Pelo Docker
+
+```bash
+# 1. Crie um arquivo .env com essas credenciais
+DB_USER=teuUsuarioDobanco
+DB_PASSWORD=tuaSenhaDoBanco
+ALGORITHM_SECRET=senhaArbitrariaParaEncriptar
+NAME=usuarioParaAdmin
+PASSWORD=senhaParaAdmin
+# estamos usando o aiven para conectar o banco 
+# em nuvem, então crie uma conta ou contate um 
+# administrador do projeto para pedir acessso
+# 2. instancie o container pelo docker
+docker run --env-file .env -p 8080:8080 angelofr/vet:api
+# 3. ao rodar a aplicação, veja nossas requisições pelo swagger:
+http://localhost:8080/swagger-ui/index.html#/auth-controller/update
+```
 
 ## Modelo de dados
 
@@ -62,6 +79,7 @@ A API sobe em `http://localhost:8080` por padrão.
 | `/medicamentos` | GET, GET/{id}, POST, PUT, PATCH, DELETE | CRUD de medicamentos |
 | `/receitas` | GET, GET/{id}, POST, PUT, PATCH, DELETE | CRUD de receitas |
 | `/tutores` | GET, GET/{id}, POST, PUT, PATCH, DELETE | CRUD de tutores |
+
 
 ## Relatórios (consultas SQL nativas)
 
