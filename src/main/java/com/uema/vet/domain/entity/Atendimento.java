@@ -15,9 +15,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "atendimento")
-@Data
 @Builder
 @NoArgsConstructor
+@Getter @Setter
 @AllArgsConstructor
 public class Atendimento {
     @Id

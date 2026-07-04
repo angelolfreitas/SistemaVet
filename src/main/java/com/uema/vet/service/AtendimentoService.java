@@ -6,10 +6,8 @@ import com.uema.vet.domain.entity.Atendimento;
 import com.uema.vet.domain.entity.Pet;
 import com.uema.vet.domain.entity.subclasses.Tutor;
 import com.uema.vet.domain.entity.subclasses.Veterinario;
-import com.uema.vet.repository.AtendimentoRepository;
-import com.uema.vet.repository.PetRepository;
-import com.uema.vet.repository.TutorRepository;
-import com.uema.vet.repository.VeterinarioRepository;
+import com.uema.vet.domain.entity.superclasses.Usuario;
+import com.uema.vet.repository.*;
 import com.uema.vet.repository.projection.HistoricoClinicoProjection;
 import com.uema.vet.repository.projection.MultiplosMedicamentosProjection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +34,8 @@ public class AtendimentoService {
 
     @Autowired
     private VeterinarioRepository veterinarioRepository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     public List<AtendimentoResponse> listarTodos() {
         return atendimentoRepository.findAll()
@@ -50,7 +50,7 @@ public class AtendimentoService {
     }
 
     @Transactional
-    public Optional<AtendimentoResponse> criar(AtendimentoRequest atendimento) {
+    public Optional<AtendimentoResponse> criar(AtendimentoRequest atendimento, Usuario creator) {
             // Valida se o Pet existe
             Pet pet = petRepository.findById(atendimento.petid())
                     .orElseThrow(() -> new RuntimeException("Pet não encontrado"));
@@ -62,6 +62,10 @@ public class AtendimentoService {
             // Valida se o Veterinário existe
             Veterinario vet = veterinarioRepository.findById(atendimento.veterinarioId())
                     .orElseThrow(() -> new RuntimeException("Veterinário não encontrado"));
+
+            Usuario atendente = usuarioRepository.findById(creator.getIdUsuario())
+                    .orElseThrow(()-> new RuntimeException("Atendente nao encontrado"));
+
             Atendimento atendimentoValue = Atendimento.builder()
                     .data(atendimento.data())
                     .pet(pet)
@@ -74,7 +78,7 @@ public class AtendimentoService {
                     .veterinario(vet)
                     .build();
             atendimentoRepository.save(atendimentoValue);
-            return Optional.of(AtendimentoResponse.create(atendimentoValue));
+            return Optional.of(AtendimentoResponse.create(atendimentoValue, atendente.getUsername()));
 
     }
 

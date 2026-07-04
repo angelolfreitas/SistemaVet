@@ -40,9 +40,10 @@ public class AtendimentoController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('user::write')")
-    public ResponseEntity<AtendimentoResponse> criar(@RequestBody AtendimentoRequest atendimento) {
-        Optional<AtendimentoResponse> novoAtendimento = atendimentoService.criar(atendimento);
+    @PreAuthorize("hasAuthority('manager::write')")
+    public ResponseEntity<AtendimentoResponse> criar(@RequestBody AtendimentoRequest atendimento,
+                                                     @AuthenticationPrincipal Usuario creator) {
+        Optional<AtendimentoResponse> novoAtendimento = atendimentoService.criar(atendimento, creator);
         return novoAtendimento.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }

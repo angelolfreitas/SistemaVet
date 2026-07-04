@@ -3,10 +3,7 @@ package com.uema.vet.domain.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.uema.vet.domain.entity.subclasses.Tutor;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,8 +11,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "pets")
-@Data
 @Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Pet {
@@ -38,5 +36,6 @@ public class Pet {
     private List<Tutor> tutores;
 
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Atendimento> atendimentos;
 }

@@ -43,7 +43,6 @@ public class PetService {
 
     @Transactional
     public Optional<PetResponse> criar(PetRequest request) {
-        try {
             Tutor tutor = tutorRepository.findByEmail(request.tutorEmail())
                     .orElseThrow(() -> new RuntimeException("Tutor não encontrado"));
 
@@ -56,9 +55,6 @@ public class PetService {
 
             petRepository.save(pet);
             return Optional.of(PetResponse.create(pet));
-        } catch (Exception e) {
-            return Optional.empty();
-        }
     }
     @Transactional
     public Optional<PetResponse> updatePet(Long id, PetRequest request) {

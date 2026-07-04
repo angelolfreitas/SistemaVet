@@ -15,7 +15,7 @@ import java.util.Set;
 @Entity
 @Table(name = "tutor")
 @PrimaryKeyJoinColumn(name = "id_tutor")
-@Data
+@Getter @Setter
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor

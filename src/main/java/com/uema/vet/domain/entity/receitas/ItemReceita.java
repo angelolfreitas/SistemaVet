@@ -1,5 +1,6 @@
 package com.uema.vet.domain.entity.receitas;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,12 +13,12 @@ public class ItemReceita {
     private ItemReceitaId id = new ItemReceitaId();
 
     @ManyToOne
-    @JoinColumn(name = "id_receita")
+    @JoinColumn(name = "id_receita", insertable = false, updatable = false)
     @MapsId("idReceita")
     private Receita receita;
 
     @ManyToOne
-    @JoinColumn(name = "id_medicamento")
+    @JoinColumn(name = "id_medicamento", insertable = false, updatable = false)
     @MapsId("idMedicamento")
     private Medicamento medicamento;
 

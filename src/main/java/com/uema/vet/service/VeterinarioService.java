@@ -50,40 +50,31 @@ public class VeterinarioService {
 
     @Transactional
     public Optional<Veterinarioresponse> criar(VeterinarioRequest request) {
-        try {
             Veterinario veterinario = new Veterinario();
-            veterinario.setUsername(request.username());
-            veterinario.setEmail(request.email());
-            veterinario.setPassword(passwordEncoder.encode(request.password()));
-            veterinario.setCpf(request.cpf());
-            veterinario.setCrmv(request.crmv());
-            veterinario.setTelefone(request.telefone());
-            veterinario.setEspecialidade(request.especialidade());
-            veterinario.setRole(request.role());
-            veterinario.setEndereco(request.endereco());
-
-            veterinarioRepository.save(veterinario);
-            String token = this.tokenService.generateToken(veterinario);
+        createVeterinario(request, veterinario);
+        String token = this.tokenService.generateToken(veterinario);
             return Optional.of(Veterinarioresponse.create(veterinario, token));
-        } catch (Exception e) {
-            return Optional.empty();
-        }
+
+    }
+
+    private void createVeterinario(VeterinarioRequest request, Veterinario veterinario) {
+        veterinario.setUsername(request.username());
+        veterinario.setEmail(request.email());
+        veterinario.setPassword(passwordEncoder.encode(request.password()));
+        veterinario.setCpf(request.cpf());
+        veterinario.setCrmv(request.crmv());
+        veterinario.setTelefone(request.telefone());
+        veterinario.setEspecialidade(request.especialidade());
+        veterinario.setRole(request.role());
+        veterinario.setEndereco(request.endereco());
+
+        veterinarioRepository.save(veterinario);
     }
 
     @Transactional
     public Optional<Veterinarioresponse> updateVeterinario(Veterinario veterinario, VeterinarioRequest request) {
         try {
-            veterinario.setUsername(request.username());
-            veterinario.setEmail(request.email());
-            veterinario.setPassword(passwordEncoder.encode(request.password()));
-            veterinario.setCpf(request.cpf());
-            veterinario.setCrmv(request.crmv());
-            veterinario.setTelefone(request.telefone());
-            veterinario.setEspecialidade(request.especialidade());
-            veterinario.setRole(request.role());
-            veterinario.setEndereco(request.endereco());
-
-            veterinarioRepository.save(veterinario);
+            createVeterinario(request, veterinario);
             return Optional.of(Veterinarioresponse.create(veterinario));
         } catch (Exception e) {
             return Optional.empty();
